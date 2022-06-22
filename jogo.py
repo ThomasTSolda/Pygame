@@ -5,42 +5,55 @@ pygame.init()
 
 display_largura = 1600
 display_altura = 900
+tamanho_tela=(display_largura, display_altura)
 
 
 pygameDisplay = pygame.display
 pygameDisplay.set_caption("Comet Space Ship")
 
-gameDisplay = pygame.display.set_mode((display_largura, display_altura))
+gameDisplay = pygame.display.set_mode(tamanho_tela)
 gameEvents = pygame.event
 clock = pygame.time.Clock()
 
-icone = pygame.image.load("assets/icon.png")
+icone = pygame.image.load("resources/icon.png")
 pygameDisplay.set_icon(icone)
 
 white = (255, 255, 255)
 
-background = pygame.image.load("assets/bg.jpg")
+background = pygame.image.load("resources/bg.jpg")
 
+def perdeu(pontos):
+    gameDisplay.blit(background, (0,0))
+    pygame.mixer.music.stop()
+    fonte = pygame.font.Font("freesansbold.ttf", 25)
+    texto = fonte.render("Pontos: "+str(pontos), True, white)
+    gameDisplay.blit(texto, (450, 90))
+    fonteContinue = pygame.font.Font("freesansbold.ttf", 20)
+    textoContinue = fonteContinue.render("press enter to restart", True, white)
+    gameDisplay.blit(textoContinue, (575,115))
+
+    pygameDisplay.update()
 
 def game():
     gameplay = True
-    movimentoXMeteoro = random.randrange(0, display_altura)
-    movimentoYMeteoro = 0
-    velocidade = 10
+    movimentoXMeteoro = movimentoX = random.randrange(0, display_largura)
+    movimentoYMeteoro = -150
+    velocidade = 5
     direcao = True
-    posicaoXNave = 850
-    posicaoYNave = 400
+    posicaoXNave = 740
+    posicaoYNave = 750
     movimentoXNave = 0
     movimentoYNave = 0
     pontos = 0
-    meteoro = pygame.image.load("assets/meteoro.png")
-    meteoro = pygame.transform.scale(meteoro, (208,240))
-    nave = pygame.image.load("assets/nave.jpg")
-    nave = pygame.transform.scale(nave, (397,561.5))
-    larguraNave = 397
-    alturaNave = 561.5
-    larguraMeteoro = 208
-    alturaMeteoro = 240
+    pontosMorrer = 0
+    meteoro = pygame.image.load("resources/meteoro.png")
+    meteoro = pygame.transform.scale(meteoro, (72, 136))
+    nave = pygame.image.load("resources/nave.png")
+    nave = pygame.transform.scale(nave, (177, 191))
+    larguraNave = 177
+    alturaNave = 191
+    larguraMeteoro = 72
+    alturaMeteoro = 136
     velocidadeNave = 50
 
     while True:
@@ -76,31 +89,46 @@ def game():
                     posicaoYNave = 0
                 elif posicaoYNave > display_altura - alturaNave:
                     posicaoYNave = display_altura - alturaNave
+
                 gameDisplay.fill(white)
                 gameDisplay.blit(background, (0, 0))
                 gameDisplay.blit(nave, (posicaoXNave, posicaoYNave))
                 gameDisplay.blit(
                     meteoro, (movimentoXMeteoro, movimentoYMeteoro))
+                    
+                
                 if direcao == True:
-                    if movimentoXMeteoro <= 1600 - larguraMeteoro:
-                        movimentoXMeteoro = movimentoXMeteoro + velocidade
-                    else:
-                        direcao = False
-                        pontos = pontos + 1
-                        movimentoYMeteoro = random.randrange(0, display_altura)
-                        velocidade = velocidade + 1
-                else:
-                    if movimentoXMeteoro >= 0:
-                        movimentoXMeteoro = movimentoXMeteoro - velocidade
-                    else:           
-                        direcao = True
-                        pontos += 1
-                        movimentoXMeteoro = random.randrange(0, display_largura)
-                        velocidade = velocidade + 1
+                    if movimentoYMeteoro < 900 :
+                        movimentoYMeteoro = movimentoYMeteoro + velocidade
                         
+                    
+                    else:
+                        movimentoYMeteoro = 0
+                        movimentoXMeteoro = random.randrange(0, display_largura-larguraMeteoro)
+                        velocidade = velocidade + 1
+                        pontos+=1
+                        
+                #colisão        
+                naveRect = nave.get_rect()
+                naveRect.x = posicaoXNave
+                naveRect.y = posicaoYNave
 
-        pygame.display.update()
+                meteoroRect = meteoro.get_rect()
+                meteoroRect.x = movimentoXMeteoro 
+                meteoroRect.y = movimentoYMeteoro-22
+
+                if naveRect.colliderect(meteoroRect) == True:
+                    gameplay = True
+                    pontosMorrer +=1
+                    movimentoYMeteoro = 0
+                    movimentoXMeteoro = random.randrange(0, display_largura)
+                if pontosMorrer == 2:
+                    perdeu(pontos)
+                    gameplay = False
+                else:    
+                    direcao = True
+        print(pontos)    
+
+        pygameDisplay.update()
         clock.tick(60)
-
-
 game()
