@@ -14,12 +14,12 @@ gameDisplay = pygame.display.set_mode((display_largura, display_altura))
 gameEvents = pygame.event
 clock = pygame.time.Clock()
 
-icone = pygame.image.load("resources/icon.png")
+icone = pygame.image.load("assets/icon.png")
 pygameDisplay.set_icon(icone)
 
 white = (255, 255, 255)
 
-background = pygame.image.load("resources/bg.jpg")
+background = pygame.image.load("assets/bg.jpg")
 
 
 def game():
@@ -33,9 +33,9 @@ def game():
     movimentoXNave = 0
     movimentoYNave = 0
     pontos = 0
-    meteoro = pygame.image.load("resources/meteoro.png")
+    meteoro = pygame.image.load("assets/meteoro.png")
     meteoro = pygame.transform.scale(meteoro, (208,240))
-    nave = pygame.image.load("resources/nave.png")
+    nave = pygame.image.load("assets/nave.jpg")
     nave = pygame.transform.scale(nave, (397,561.5))
     larguraNave = 397
     alturaNave = 561.5
