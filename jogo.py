@@ -1,5 +1,14 @@
 import pygame
 import random
+import os
+
+os.system("cls")
+
+nome = input('Nome: ')
+email = input('Email: ')
+log = open('log.txt','a')
+log.write(f'Nome: {nome}\nEmail: {email}\n')
+log.close()
 
 pygame.init()
 
