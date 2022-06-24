@@ -23,15 +23,27 @@ white = (255, 255, 255)
 background = pygame.image.load("resources/bg.jpg")
 background = pygame.transform.scale(background, (800, 450))
 
+explosaoSound = pygame.mixer.Sound("resources/xiii.mp3")
+explosaoSound.set_volume(0.5)
+
+
+restartSound = pygame.mixer.Sound("resources/elegosta.mp3")
+restartSound.set_volume(0.5)
+
+colisionSound = pygame.mixer.Sound("resources/tomi.mp3")
+colisionSound.set_volume(0.5)
+
 def perdeu(pontos):
     gameDisplay.blit(background, (0,0))
     pygame.mixer.music.stop()
+    pygame.mixer.Sound.play(explosaoSound)
     fonte = pygame.font.Font("freesansbold.ttf", 100)
     texto = fonte.render("Pontos: "+str(pontos), True, white)
     gameDisplay.blit(texto, (287, 125))
     fonteContinue = pygame.font.Font("freesansbold.ttf", 30)
     textoContinue = fonteContinue.render("Press enter to restart...", True, white)
     gameDisplay.blit(textoContinue, (312,250))
+    
 
     pygameDisplay.update()
 
@@ -39,10 +51,10 @@ def game():
     gameplay = True
     movimentoXMeteoro = movimentoX = random.randrange(0, display_largura)
     movimentoYMeteoro = -185
-    velocidade = 10
+    velocidade = 1
     direcao = True
-    posicaoXNave = 500
-    posicaoYNave = 600
+    posicaoXNave = 350
+    posicaoYNave = 350
     movimentoXNave = 0
     movimentoYNave = 0
     pontos = 0
@@ -51,11 +63,14 @@ def game():
     meteoro = pygame.transform.scale(meteoro, (36, 68))
     nave = pygame.image.load("resources/nave.png")
     nave = pygame.transform.scale(nave, (88, 95))
+    pygame.mixer.music.load("resources/naveespacial.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
     larguraNave = 88
     alturaNave = 95
     larguraMeteoro = 36
     alturaMeteoro = 68
-    velocidadeNave = 50
+    velocidadeNave = 15
 
     while True:
         for event in gameEvents.get():
@@ -72,6 +87,8 @@ def game():
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     movimentoYNave = velocidadeNave
                 elif event.key == pygame.K_RETURN:
+                    pygame.mixer.Sound.play(restartSound)
+                    
                     game()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_a or event.key == pygame.K_w or event.key == pygame.K_s or event.key == pygame.K_d :
@@ -106,7 +123,7 @@ def game():
                 else:
                     movimentoYMeteoro = -185
                     movimentoXMeteoro = random.randrange(0, display_largura-larguraMeteoro)
-                    velocidade = velocidade + 1
+                    velocidade = velocidade + 0.8
                     pontos+=1
             
             fonte = pygame.font.Font('freesansbold.ttf', 20)
@@ -126,6 +143,7 @@ def game():
             meteoroRect.y = movimentoYMeteoro-22
 
             if naveRect.colliderect(meteoroRect) == True:
+                pygame.mixer.Sound.play(colisionSound)
                 gameplay = True
                 pontosMorrer -=1
                 movimentoYMeteoro = -185
@@ -135,8 +153,7 @@ def game():
                 gameplay = False
             else:    
                 direcao = True
-        print(pontos)    
 
         pygameDisplay.update()
-        clock.tick(60)
+        clock.tick(75)
 game()
